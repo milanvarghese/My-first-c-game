@@ -3,31 +3,54 @@
 #include<conio.h>
 #include <windows.h> 
 #include <dos.h> 
+
 int matrix[4][4]={{0,2,3,4},{1,6,7,8},{5,9,10,11},{13,14,15,12}};
 int run=1,count=0;
 int i,j,temp;
-textcolor(RED);
 char readKeyboard();
 void displayMatrix();
 int curserPosition(int key);
 void checkState();
+void swap(int *a, int *b);
+void shuffle();
 
 int main(){
+	run=0;
+	if(run==0){
+		printf("\n------ Matrix Game V1.1 ------\n");
+		printf("\n------- How to Play: -------\n");
+		printf("\n- Your Location is at 0");
+		printf("\n- Press w,a,s,d keys to move (Up,Left,Down, Right) and swap the adjucent number");
+		printf("\n- You have to swap the numbers until the numbers in matrix are in order from 1-15 with the last digit being 0");
+		printf("\n- The number of moves you used will be printed as well ");
+		printf("\n-------------------------------\n");
+		printf("\nPress any key to continue");
+		if(readKeyboard()){
+			run=1;
+		}
+	}
+	shuffle();
 	while(run==1){
 		system("cls");
-		printf("------ Matrix Game V1.0 ------\n");
+		printf("------ Matrix Game V1.1 ------\n");
 		displayMatrix();
+		printf("\nCounter = %d\n",count);
 		printf("-------------------------------\n");
 		curserPosition(readKeyboard());
 		system("cls");
-		printf("------ Matrix Game V1.0 ------\n");
+		printf("------ Matrix Game V1.1 ------\n");
 		displayMatrix();
+		printf("\nCounter = %d\n",count);
 		printf("-------------------------------\n");
 		checkState();
 	}
 	if(run==0){
 		Beep(1000, 100); 
-		printf("\nCONGRATULATIONS, YOU WON!!\n");
+		system("cls");
+		printf("------ Matrix Game V1.0 ------\n");
+		displayMatrix();
+		printf("-------------------------------\n");
+		printf("\nCONGRATULATIONS, YOU WON in %d Moves!!!\n", count);
 	}
 	return 0;
 }
@@ -41,7 +64,12 @@ void displayMatrix(){
 		printf("\n");
 	}
 }
-
+void swap(int *a, int *b) 
+{ 
+    int temp = *a; 
+    *a = *b; 
+    *b = temp; 
+} 
 char readKeyboard(){
 	return getch();
 }
@@ -64,9 +92,7 @@ int curserPosition(int key){
 		if(i==0){
 			i=0;
 		}else{
-			temp=matrix[i][j];
-			matrix[i][j]=matrix[i-1][j];
-			matrix[i-1][j]=temp;
+			swap(&matrix[i][j], &matrix[i-1][j]);
 			i--;
 			count++;
 		}
@@ -76,9 +102,7 @@ int curserPosition(int key){
 		if(j==0){
 			j=0;
 		}else{
-			temp=matrix[i][j];
-			matrix[i][j]=matrix[i][j-1];
-			matrix[i][j-1]=temp;
+			swap(&matrix[i][j], &matrix[i][j-1]);
 			j--;
 			count++;
 		}
@@ -88,9 +112,7 @@ int curserPosition(int key){
 			if(i==3){
 			i=3;
 		}else{
-			temp= matrix[i][j];
-			matrix[i][j]=matrix[i+1][j];
-			matrix[i+1][j]=temp;
+			swap(&matrix[i][j], &matrix[i+1][j]);
 			i++;
 			count++;
 		}
@@ -100,9 +122,7 @@ int curserPosition(int key){
 		if(j==3){
 			j=3;
 		}else{
-			temp=matrix[i][j];
-			matrix[i][j]=matrix[i][j+1];
-			matrix[i][j+1]=temp;
+			swap(&matrix[i][j], &matrix[i][j+1]);
 			j++;
 			count++;
 		}
@@ -131,3 +151,17 @@ void checkState(){
 		run=0;
 	}
 }
+
+//Fisher–Yates algorithm to shuffle
+void shuffle(){
+	int x,y;
+	srand(time(NULL));
+	for(x=3;x>=0;x--){
+		int m=rand()%(x+1);
+		for(y=3;y>=0;y--){
+			int n=rand()%(x+1);
+			swap(&matrix[x][y],&matrix[m][n]);
+		}
+	}
+}
+
